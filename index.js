@@ -1,16 +1,17 @@
 const express = require("express");
-const http = require("http");
-const mail = require("nodemailer");
+const https = require("https");
+const fs = require("fs");
 
+const mail = require("nodemailer");
 let transport = mail.createTransport({
     service: "outlook",
     auth: {
         user: "defenestration1@outlook.com",
-        pass: "NOPE!"
+        pass: "i wont tell"
     }
 });
 
-const app = express(), server = http.createServer(app);
+const app = express();
 
 app.use(express.json());
 
@@ -39,4 +40,9 @@ app.post("/emails", (req, res) => {
     
 });
 
-server.listen(80, () => console.log("Up on http!"));
+let sslOptions = {
+    key: fs.readFileSync("C:\\Certbot\\live\\fraday.net\\privkey.pem"),
+    cert: fs.readFileSync("C:\\Certbot\\live\\fraday.net\\fullchain.pem")
+};
+
+https.createServer(sslOptions, app).listen(443, () => console.log("Up on https!"));
